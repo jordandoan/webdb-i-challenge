@@ -7,10 +7,18 @@ const server = express();
 server.use(express.json());
 
 server.get("/api/accounts", (req,res) => {
-  db.select('*').from('accounts')
-    .then(accounts => res.status(200).json(accounts))
-    .catch(err => res.send(err));
-})
+  if (!req.query) {
+    db.select('*').from('accounts')
+      .then(accounts => res.status(200).json(accounts))
+      .catch(err => res.send(err));
+  } else {
+    let order = req.query.sortdir || 'asc';
+    let cat = req.query.sortby || 'id';
+    db('accounts').orderBy(cat, order).limit(req.query.limit)
+      .then(accounts => res.status(200).json(accounts))
+      .catch(err => res.send(err));
+  }
+});
 
 server.get("/api/accounts/:id", (req,res) => {
   const { id } = req.params;
@@ -32,7 +40,7 @@ server.post("/api/accounts", (req,res) => {
     res.status(400).json({message:"Name and budget required"})
   } else {
     db('accounts').insert(req.body)
-      .then(id => res.status(201).json({id: id}))
+      .then(id => res.status(201).json({id: id[0]}))
       .catch(err => res.status(500).json(err));
   }
 })
