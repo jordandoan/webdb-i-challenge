@@ -34,7 +34,7 @@ WHERE ContactName = "Bilbo Baggins"
 ```
 ## (Stretch) Find a query to discover how many different cities are stored in the Customers table. Repeats should not be double counted  
 ```SQL
-SELECT DISTINCT Country
+SELECT DISTINCT City
 FROM Customers
 ```
 
